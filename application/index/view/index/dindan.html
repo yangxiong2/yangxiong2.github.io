@@ -1,0 +1,276 @@
+<?php
+	require_once("PDO.php");
+	$obj = new dbpdo();
+	
+	if(isset($_POST["btnsubmit"])){
+		$date = date("YmdHis",time()+8*60*60).rand(1, 10000);
+		if(!is_array($_POST["wid"])){
+			$result = $obj->insert("tt_order",array("oname"=>$date,"wid"=>$_POST["wid"],"wnum"=>"1","uid"=>$_COOKIE["uid"],"did"=>$_POST["dz"]));
+			if($result <= 0){
+				echo "<script>alert('下单失败!');location.href='index.php'</script>";
+			}else{
+				echo "<script>alert('下单成功!');location.href='zf1.php'</script>";
+			}
+		}else{
+			foreach($_POST["wid"]as $val){
+				$num = $obj->select("tt_shopcart","wnum","where uid=".$_COOKIE["uid"]." and wid=".$val,"one");
+				$result = $obj->insert("tt_order",array("oname"=>$date,"wid"=>$val,"wnum"=>$num[0],"uid"=>$_COOKIE["uid"],"did"=>$_POST["dz"]));
+				if($result <= 0){
+					echo "<script>alert('下单失败!');location.href='index.php'</script>";
+				}else{
+					$result = $obj->delete("tt_shopcart", "where wid={$val} and uid=".$_COOKIE["uid"]);
+				}
+			}
+			echo "<script>alert('下单成功!');location.href='zf1.php'</script>";
+		}
+	}
+	
+	if(isset($_POST["addrsubmit"])){
+		$yi = $_POST["yi"];
+		$er = $_POST["er"];
+		$san = $_POST["san"];
+		$name = $_POST["addrname"];
+		$addr = $_POST["addrs"];
+		$tel = $_POST["addrtel"];
+		
+		$result = $obj->insert("tt_addr", array("province"=>$yi,"city"=>$er,"area"=>$san,"dname"=>$name,"dtel"=>$tel,"daddr"=>$addr,"uid"=>$_COOKIE["uid"]));
+		if($result > 0){
+			echo "<script>alert('添加成功!');</script>";
+		}else{
+			echo "<script>alert('添加失败!');location.href='index.php'</script>";
+		}
+	}
+?>
+<html>
+	<head>
+		 <style>
+		 	tr th,tr td{text-align: center;}
+		 	.dz{padding-top: 10px; margin-left: 10px;}
+		 </style>
+		 
+		 <script type="text/javascript" src="js/jquery-1.9.0.min.js" ></script>
+		 <link rel="stylesheet" href="css/bootstrap4.min.css" />
+		 <script type="text/javascript" src="js/bootstrap4.min.js" ></script>
+		 <script>
+		 	
+		 	$(function(){
+//		 		$('#myModal').modal();
+				$(".dz").click(function(){
+					$(".dz").find("input").removeAttr("name");
+					$(".dz").css("border","1px white solid");
+					$(this).css("border","1px #666 solid");
+					$(this).find("input").attr("name","dz");
+				})
+				
+				
+				$("#addryi").change(function(){
+					$.ajax({
+						type:"get",
+						url:"./selectaddr.php?addr=2&father="+$(this).val(),
+						dataType: "json",
+						async:true,
+						success:function(data){
+							if(data != 0){
+								var obj = data;
+								var html ="<option value='0' selected='selected'>----请选择----</option>";
+								$.each(obj, function(index,val) {
+									html+="<option value='"+index+"'>"+val+"</option>";
+								});
+								$("#addrer").html(html);
+								$("#addrsan").html("<option selected='selected'>----请选择----</option>");
+							}else{
+								$("#addrer").html("<option value='0' selected='selected'>----请选择----</option>");
+								$("#addrsan").html("<option selected='selected'>----请选择----</option>");
+							}
+						}
+					});
+				})
+				
+				$("#addrer").change(function(){
+					if($(this).val() != "0"){
+						$.ajax({
+							type:"get",
+							url:"./selectaddr.php?addr=3&father="+$(this).val(),
+							dataType: "json",
+							async:true,
+							success:function(data){
+								if(data != 0){
+									var obj = data;
+									var html ="<option selected='selected'>----请选择----</option>";
+									$.each(obj, function(index,val) {
+										html+="<option value='"+index+"'>"+val+"</option>";
+									});
+									$("#addrsan").html(html);
+								}else{
+									$("#addrsan").html("<option selected='selected'>----请选择----</option>");
+								}
+							}
+						});
+					}else{
+						$("#addrsan").html("<option selected='selected'>----请选择----</option>");
+					}
+				})
+				
+			})
+		 </script>
+	</head>
+	<body>
+		<form action="dindan.php" method="post">
+		<h2>1丶选择地址&nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-info" onclick="$('#myModal').modal()">+增加地址</button></h2>
+		<?php
+			$result = $obj->get_table_count("tt_addr","where uid=".$_COOKIE["uid"]);
+			if($result == 0){
+				echo '<script>$(function(){$("#myModal").modal()})</script>';
+			}
+			$result = $obj->select("tt_addr","*","where uid=".$_COOKIE["uid"],"all");
+			
+			$num=0;
+			foreach($result as $val){
+				$province = $obj->select("hat_province","province","where provinceID=".$val["province"]);
+				$city = $obj->select("hat_city","city","where cityID=".$val["city"]);
+				$area = $obj->select("hat_area","area","where areaID=".$val["area"]);
+				
+				echo '
+					<div class="dz"  style=" float:left; height: 100px;  width: 300px; padding-left:10px; line-height:10px; box-shadow:0px 0px 5px black; '.($num==0?"border:1px #666 solid;":"border:1px white solid;").' ">
+						<input type="hidden" '.($num == 0?"name='dz'":"").' value="'.$val["did"].'" />
+						<p style="font-size:1.0rem;">'.($province[0].$city[0].$area[0].$val["daddr"]).'</p>
+						<p>收货人:'.$val["dname"].'</p>
+						<p>收货电话:'.$val["dtel"].'</p>
+					</div>
+				';
+				$num++;
+			}
+		?>
+		<div style="clear: both;"></div>
+		<br />
+		<h2>2丶商品清单</h2>
+		
+		<table class="table">
+			<thead>
+				<tr>
+					<th>商品图片</th>
+					<th>商品名字</th>
+					<th>单价</th>
+					<th>数量</th>
+					<th>总价</th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php
+		      		$num=0;
+		      		$money = 0;
+					if(!isset($_POST["wid"])){
+						foreach($_POST["box"] as $wid){
+							$result = $obj->select("tt_shopcart","*","where uid=".$_COOKIE["uid"]." and wid=".$wid,"one");
+			//				print_r($result);
+							$results = $obj->select("tt_ware","*","where wid=".$wid,"one");
+							$num++;
+							$money += $result["wnum"]*$results["wmoney"];
+							echo '
+								<tr>
+			    				<td><img src="admin/'.$results["wimg"].'" width="100px"><input type="hidden" name="wid[]" value="'.$wid.'"></td>
+			    				<td>'.$results["wtitle"].'</td>
+			   					<td>'.$results["wmoney"].'</td>
+			    				<td>'.$result["wnum"].'</td>
+			    				<td>'.($result["wnum"]*$results["wmoney"]).'<td>
+			    				</tr>
+			   				';
+							
+						}
+					}else{
+		//				echo "a";
+						$wid = $_POST["wid"];
+		//				$result = $obj->select("tt_shopcart","*","where uid=".$_COOKIE["uid"]." and wid=".$wid,"one");
+		//				print_r($result);
+						$results = $obj->select("tt_ware","*","where wid=".$wid,"one");
+						$num++;
+						$money += 1*$results["wmoney"];
+						echo '
+							<tr>
+		    				<td><img src="admin/'.$results["wimg"].'" width="100px"><input type="hidden" name="wid" value="'.$wid.'"></td>
+		    				<td>'.$results["wtitle"].'</td>
+		   					<td>'.$results["wmoney"].'</td>
+		    				<td>1</td>
+		    				<td>'.(1*$results["wmoney"]).'<td>
+		    				</tr>
+		   				';
+					}
+		      		
+					if($num == 0){
+						echo '<script>alert("没有商品!");location.href="index.php"</script>';
+					}
+		      	?>
+			</tbody>
+			<tfoot>
+				<tr>
+					<td colspan="4" style="text-align: right;">
+						<h3>总价:<?php echo $money; ?></h3>
+					</td>
+					<td colspan="0" style="text-align: right;">
+						<button class="btn btn-info" type="submit" name="btnsubmit">立即下单</button>
+					</td>
+				</tr>
+			</tfoot>
+		</table>
+		</form>
+		
+		
+		<div class="modal" id="myModal" data-backdrop="static">
+			<form action="dindan.php" method="post">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<div class="modal-title">
+								<h4>添加地址</h4>
+							</div>
+						</div>
+						<div class="modal-body">
+							
+							<!--三级联动-->
+							<p>所在省:
+							<select name="yi" id="addryi">
+								<option value="0" selected="selected">----请选择地址----</option>
+								<?php
+									$pro = $obj->select("hat_province","*","","all");
+									foreach($pro as $val){
+										echo '
+											<option value="'.$val["provinceID"].'">'.$val["province"].'</option>
+										';
+									}
+								?>
+							</select></p>
+							<p>所在市:
+							<select name="er" id="addrer">
+								<option value="0"  selected="selected">----请选择地址----</option>
+							</select></p>
+							所在区:
+							<select name="san" id="addrsan">
+								<option selected="selected">----请选择地址----</option>
+							</select>
+							
+							<br/>
+							
+							<br/>
+							<p>收货人:&nbsp;&nbsp;&nbsp;<input type="text" name="addrname" required="required"/></p>
+							
+							<p>详细地址:<input type="text" name="addrs" required="required"/></p>
+							收货电话:<input type="text" name="addrtel"  required="required"/><br />
+							<?php
+								if(isset($_POST["box"])){
+									foreach($_POST["box"] as $wid){
+										echo '<input type="hidden" value="'.$wid.'" name="box[]" />';
+									}
+								}elseif(isset($_POST["wid"])){
+									echo '<input type="hidden" value="'.$_POST["wid"].'" name="wid" />';
+								}
+							?>
+						</div>
+						<div class="modal-footer">
+							<button class="btn btn-info" type="submit" name="addrsubmit" style="float: left;">添加</button>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</body>
+</html>

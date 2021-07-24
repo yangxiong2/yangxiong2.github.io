@@ -1,0 +1,170 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/index/css/index.css" />
+    <link rel="stylesheet" href="/static/index/iconfont/iconfont.css" />
+    <link rel="stylesheet" href="/static/index/css/bootstrap4.min.css" />
+</head>
+<body style="background-color: #f2f2f2;">
+<div class="container-fluid">
+    {include file="public/head" /}
+<!--轮播图-->
+<div id="demo" class="carousel" data-ride="carousel" style="width: 64rem; margin: 0 auto; margin-top: 1rem;">
+    <!--	指示符-->
+    <ul class="carousel-indicators">
+        <li data-target="#demo" data-slide-to = "0" class="active"></li>
+        <li data-target="#demo" data-slide-to = "1"></li>
+        <li data-target="#demo" data-slide-to = "2"></li>
+    </ul>
+    <!--插入轮播图-->
+    <div class="carousel-inner" id="identifier">
+        <div class="carousel-item active">
+            <img src="/static/index/image/TB183NQapLM8KJjSZFBSutJHVXa.jpg" width="100%" height="300px" />
+            <div class="carousel-caption">标题 1</div>
+        </div>
+        <div class="carousel-item">
+            <img src="/static/index/image/TB1JNHwKFXXXXafXVXXSutbFXXX.jpg" width="100%" height="300px" />
+            <div class="carousel-caption">标题 2</div>
+        </div>
+        <div class="carousel-item">
+            <img src="/static/index/image/u=3583514112,3093055996&fm=26&gp=0.jpg" width="100%" height="300px" />
+            <div class="carousel-caption">标题 3</div>
+        </div>
+    </div>
+    <!--左右切换按钮-->
+    <a class="carousel-control-prev" href="#demo" data-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </a>
+    <a class="carousel-control-next" href="#demo" data-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </a>
+</div>
+
+<!--今日特卖-->
+<div class="index-title">
+    <span style="float: right;"><a href="productlist.php">更多++</a></span>今日特卖
+</div>
+<div style="width: 64rem; margin: 0 auto; height:33rem; margin-top: 1rem;">
+    <ul class="index-jrtm">
+        <li><a href="><img style='height: 12.6rem; width:12rem; ' src=admin/"" /></a><h6 style='text-align:center;color:blue'>""</h6></li>";
+
+
+    </ul>
+</div>
+
+<div style="width: 64rem; height: 6.2rem; margin: 0 auto; margin-top: 2rem; "><img src="/static/index/image/T11zCjBvWv1RCvBVdK.jpg" width="100%" height="100%"/></div>
+
+<!--品牌促销-->
+<div class="index-title">
+    <span style="float: right;"><a href="productlist.php">更多++</a></span>品牌促销
+</div>
+<div style="width: 64rem; margin: 0 auto; height: 33rem; margin-top: 1rem;">
+    <ul class="index-jrtm">
+
+				<li><a href=detailed.html?wid=""><img style='height: 12.6rem; width:12rem; ' src="" /></a><h6 style='text-align:center;color:blue'>""</h6></li>";
+
+
+
+    </ul>
+</div>
+
+<div style="width: 64rem; height: 6.2rem; margin: 0 auto; margin-top: 2rem; "><img src="/static/index/image/T1ZvZsB4Dv1RCvBVdK.jpg" width="100%" height="100%"/></div>
+
+<div style="width:64rem;height: 5rem; margin: 0 auto; text-align: center; font-size: 2rem; margin-top: 1rem;">
+    排&nbsp;/&nbsp;行&nbsp;/&nbsp;榜&nbsp;
+</div>
+<div style="height: 32rem;width: 64rem; margin: 0 auto;">
+    <div style="width: 50%; height: 32rem; float: right;">
+        <div style="width: 100%; height: 18.8rem; background: white; margin-bottom: 0.5rem;">
+
+            <a href=''><img style='height: 100%;width:100%;'  src="" /></a>";
+
+
+
+        </div>
+        <div style="width: 100%; height: 12rem; background: white;">
+
+            <a href=''><img style='height: 100%;width:100%;'  src="" /></a>";
+
+
+            ?>
+        </div>
+    </div>
+
+    <div style="width: 50%; height: 31.25rem; background: white;">
+
+			<a href=''><img style='height: 100%;width:100%;'  src="" /></a>";
+
+    </div>
+</div>
+</div>
+<!--底部-->
+{include file="public/footer" /}
+
+<!--固定搜索框-->
+<div class="top-search">
+    <div style="width: 64rem; height: 3.125rem; margin: 0 auto;">
+        <div style="width: 51.5rem; height: 2.68rempx; padding-top: 0.3rem; float: right;">
+            <form action="productlist.php" method="get">
+                <input type="text" name="sea" class="form-control" placeholder="搜索" style="width:31.2rem; float: left;"/>
+                <input type="submit" class="btn btn-info" value="搜索" style="float: left;"/>
+            </form>
+        </div>
+        <div style="width: 6.25rem; height: 3.125rem;">
+            <img src="/static/index/image/logo.jpg" width="100%" height="100%"/>
+        </div>
+
+    </div>
+</div>
+
+<!--回到头部-->
+<div class="to-top">
+    top
+</div>
+
+<!--购物车-->
+<?php
+if(isset($_COOKIE["uid"])){
+echo '<div class="user">
+    <div id="gwcs" style="width: 50px; float: right;"  onclick=location.href="shoppingcarthav.php">
+        <i class="iconfont" title="购物车" alt="购物车">&#xe621;</i>
+    </div>
+    <div id="gwc" style="width: 6.25rem; float: left; display: none;">
+    </div>
+    </div>';
+}
+?>
+<script type="text/javascript" src="/static/index/js/bootstrap4.min.js"></script>
+</body>
+<script>
+    $(function(){
+        $(".to-top").click(function(){
+            $("html,body").animate({scrollTop:0},500);
+        });
+        $(document).scroll(function(){
+            if($(document).scrollTop() > 150){
+                $(".top-search").css("display","block");
+            }else{
+                $(".top-search").css("display","none");
+            }
+        })
+
+        $("#gwcs").mouseover(function(){
+            $.ajax({
+                type:"get",
+                url:"gwcnum.php?num=1",
+                async:true,
+                success:function(data){
+                    $("#gwc").html("购物车:&nbsp;"+data);
+                }
+            });
+            $("#gwc").css("display","block");
+            $(".user").css("width","150px");
+        })
+        $("#gwcs").mouseout(function(){
+            $("#gwc").css("display","none");
+            $(".user").css("width","50px");
+        })
+    })
+</script>
+</html>
